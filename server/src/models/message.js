@@ -37,15 +37,7 @@ module.exports = class Message {
   get content() {
     return this._content;
   }
-
-  /**
-   * Returns if it is a broadcast message
-   * @returns {bool}
-   */
-  isToBroadcast() {
-    return this.to ? false : true;
-  }
-
+  
   /**
    *
    */

@@ -1,41 +1,93 @@
+const net = require('net');
 const User = require('./user');
 const Message = require('./message');
 
 module.exports = class Room {
-    /**
-   * 
-   * @param {string} alias
+  /**
+   * Creates a new instance of Chat room
    */
   constructor(alias) {
+    this._users = new Set();
     this._alias = alias;
-    this._users = [];
+    this._messages = [];
   }
 
+  get alias() {
+    return this._alias;
+  }
+
+  /**
+   *
+   */
   get users() {
     return this._users;
   }
 
   /**
-   * 
-   * @param {User} user 
+   *
    */
-  addUser(user) {
-    const userWithNickname = this._users.find(
-      (u) => u.nickname === user.nickname
-    );
-    if (userWithNickname)
-      throw new Error('Already exists a user with this nickname');
-    this._users.push(user);
+  get numberOfUsers() {
+    return this._users.size;
   }
 
   /**
-   * 
-   * @param {User} user 
+   *
+   * @param {User} user
+   */
+  addUser(user) {
+    this._users.add(user);
+    user.room = this;
+    this._broadcast(`${user.nickname} has joined ${this.alias}`)
+  }
+
+  /**
+   *
+   * @param {User} user
    */
   removeUser(user) {
-    const userIndex = this._users.indexOf(user);
-    if (userIndex < 0) return false;
-    this._users.splice(userIndex, 1);
-    return true;
+    const wasDeleted = this._users.delete(user);
+    if (wasDeleted) {
+      user.room = undefined;
+    }
+    return wasDeleted;
+  }
+
+  /**
+   *
+   * @param {Message} message
+   */
+  sendMessage(message) {
+    this._messages.push(message);
+
+    if (message.private) {
+      this._sendPrivateMessage(message);
+    } else {
+      const formattedMessage = message.to
+        ? `${message.from.nickname} says to ${message.to.nickname}: ${message.content}`
+        : `${message.from.nickname} says: ${message.content}`;
+      this._broadcast(formattedMessage);
+    }
+  }
+
+  _sendPrivateMessage(message) {
+    const formattedMessage = `${message.from.nickname} says privately to ${message.to.nickname}: ${message.content}`;
+    message.to.client.write(formattedMessage);
+  }
+
+  /**
+   *
+   * @param {string} messageContent
+   */
+  _broadcast(messageContent) {
+    this._users.forEach((user) => {
+      user.client.write(messageContent);
+    });
+  }
+
+  /**
+   *
+   */
+  get messages() {
+    return this._messages;
   }
 };

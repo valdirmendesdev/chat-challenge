@@ -1,4 +1,5 @@
-const ChatServer = require('./chatServer')
+const { ChatServer } = require('./chatServer')
 
-const chat = new ChatServer();
-chat.listen(4000)
+const port = process.env.PORT || 4000;
+const chat = new ChatServer(port);
+chat.start()

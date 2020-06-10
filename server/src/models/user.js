@@ -1,14 +1,11 @@
 const net = require('net');
 
 module.exports = class User {
-
   /**
-   * @param {string} nickname
-   * @param {net.Socket} connection 
+   * @param {net.Socket} client
    */
-  constructor(nickname, connection) {
-    this.nickname = nickname;
-    this._connection = connection;
+  constructor(client) {
+    this._client = client;
   }
 
   /**
@@ -19,9 +16,25 @@ module.exports = class User {
   }
 
   /**
-   * 
+   *
    */
   get nickname() {
     return this._nickname;
   }
+
+  /**
+   * 
+   */
+  get client() {
+    return this._client;
+  }
+
+  set room(room) {
+    this._room = room
+  }
+
+  get room () {
+    return this._room;
+  }
+
 };

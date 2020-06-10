@@ -1,28 +1,51 @@
-const net = require('net')
-const ChatServer = require('../src/chatServer')
-const User = require('../src/models/user')
+const net = require('net');
+const { ChatServer, defaultRoomAlias } = require('../src/chatServer');
+const User = require('../src/models/user');
+const Room = require('../src/models/room');
 
+let chatServer, client, room;
 
-let chatServer;
-
-describe('ChatServer features tests', () => {
-
+describe('Unit tests ChatServer', () => {
   beforeEach(() => {
-    chatServer = new ChatServer()
-  })
+    chatServer = new ChatServer(1000);
+    client = new net.Socket();
+    chatServer.onNew(client);
+    room = chatServer.getRoomByAlias(defaultRoomAlias);
+  });
 
-  test('should creates a new user for the connection', () => {
-    expect(chatServer
-            .createUserToConnection(new net.Socket())
-          ).toBeInstanceOf(User)
-  })
+  test('should creates a user on a new client', () => {
+    expect(chatServer.numberOfClients).toBe(1);
+    expect(chatServer.getUser(client)).toBeTruthy();
+    expect(chatServer.getUser(client)).toBeInstanceOf(User);
+  });
 
-  test('should sets the nickname for the user', () => {
-    
-  })
+  test('should throws an exception - Nickname already in use', () => {
+    chatServer.setNickname(client, 'testNickname');
+    newClient = new net.Socket();
+    chatServer.onNew(newClient);
+    expect(() =>
+      chatServer.setNickname(newClient, 'testNickname')
+    ).toThrowError('Already exists a user with this nickname');
+  });
 
-})
+  test('should returns a room by alias', () => {
+    expect(room).toBeInstanceOf(Room);
+    expect(room.alias).toBe(defaultRoomAlias);
+  });
 
+  test('should adds user to room by room alias', () => {
+    const user = chatServer.getUser(client);
+    chatServer.addToRoom(client, defaultRoomAlias);
+    expect(user.room).toMatchObject(room);
+  });
+
+  test('should disconnect user from chat', () => {
+    chatServer.addToRoom(client, defaultRoomAlias);
+    chatServer.disconnect(client);
+    expect(chatServer.numberOfClients).toBe(0);
+    expect(room.numberOfUsers).toBe(0);
+  });
+});
 
 // const port = process.env.PORT || 4000;
 // let chatServer;
@@ -44,6 +67,5 @@ describe('ChatServer features tests', () => {
 //       chatServer.stop()
 //     })
 //   })
-
 
 // })
