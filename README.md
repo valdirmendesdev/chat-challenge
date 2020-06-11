@@ -22,7 +22,7 @@ git clone git@github.com:valdirmendesgt/chat-challenge.git
 
 Ao startar o servidor, a aplicação vai ficar aguardando novas conexões.
 
-Ao entrar uma nova conexão, é solicitado o nome de apelido do usuário e mesmo é adicionado na sala geral;
+Ao entrar uma nova conexão, é solicitado o apelido do usuário e o mesmo é adicionado na sala geral;
 
 Uma vez adicionado à sala, o usuário tem as funcionalidades a seguir:
 
@@ -55,7 +55,7 @@ yarn start
 
 ### Client
 
-Se conecta à um servidor ativo do chat
+Se conecta à um servidor ativo do chat na rede local, utilizando a porta padrão 4000
     
 ```bash
 yarn install
