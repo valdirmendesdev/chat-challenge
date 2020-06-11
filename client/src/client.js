@@ -3,13 +3,13 @@ const readline = require('readline');
 
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout,
+  output: process.stdout
 });
 
 const client = net.createConnection({ port: 4000 });
 
 client.on('data', (data) => {
-  console.log(`${data.toString()}\n`);
+  console.log(`${data.toString()}`);
 });
 
 client.on('end', () => {
@@ -19,4 +19,5 @@ client.on('end', () => {
 
 rl.on('line', (input) => {
   client.write(input);
+  console.log('\n')
 });
