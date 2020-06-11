@@ -15,7 +15,7 @@ O projeto foi desenvolvido e disponibilizado em duas partes: o servidor e o clie
 
 Faça o clone do repositório
 ```bash
-git clone git@github.com:valdirmendesgt/chat-challenge.git
+git clone git@github.com:valdirmendesdev/chat-challenge.git
 ```
 
 ### Server
