@@ -12,19 +12,22 @@ module.exports = class Room {
     this._messages = [];
   }
 
+  /**
+   * @returns {string}
+   */
   get alias() {
     return this._alias;
   }
 
   /**
-   *
+   * @returns {Set}
    */
   get users() {
     return this._users;
   }
 
   /**
-   *
+   * @returns {number}
    */
   get numberOfUsers() {
     return this._users.size;
@@ -37,7 +40,7 @@ module.exports = class Room {
   addUser(user) {
     this._users.add(user);
     user.room = this;
-    this._broadcast(`${user.nickname} has joined ${this.alias}`)
+    this._broadcast(`${user.nickname} has joined ${this.alias}\n`)
   }
 
   /**
@@ -69,13 +72,17 @@ module.exports = class Room {
     }
   }
 
+  /**
+   * 
+   * @param {Message} message 
+   */
   _sendPrivateMessage(message) {
     const formattedMessage = `${message.from.nickname} says privately to ${message.to.nickname}: ${message.content}`;
+    message.from.client.write(formattedMessage);
     message.to.client.write(formattedMessage);
   }
 
   /**
-   *
    * @param {string} messageContent
    */
   _broadcast(messageContent) {
@@ -85,9 +92,17 @@ module.exports = class Room {
   }
 
   /**
-   *
+   * @return {Array}
    */
   get messages() {
     return this._messages;
+  }
+
+  /**
+   * 
+   * @param {string} nickname 
+   */
+  getUser(nickname) {
+    return Array.from(this._users).find(u => u.nickname === nickname);
   }
 };

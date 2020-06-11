@@ -13,6 +13,7 @@ describe('Room unit tests model', () => {
     room = new Room('testRoom');
     client = createClient();
     user = createNewUser(client);
+    user.nickname = 'testUser';
     room.addUser(user);
     message = new Message('Hello!', user);
   });
@@ -41,7 +42,7 @@ describe('Room unit tests model', () => {
   test('should sends a public message to all users', () => {
     room.addUser(createNewUser(createClient()));
     room.sendMessage(message);
-    expect(mWrite).toHaveBeenCalledTimes(2);
+    expect(mWrite).toHaveBeenCalled();
     expect(room.messages.length).toBe(1)
   })
 
@@ -50,7 +51,7 @@ describe('Room unit tests model', () => {
     room.addUser(user2);
     message.to = user2;
     room.sendMessage(message);
-    expect(mWrite).toHaveBeenCalledTimes(2);
+    expect(mWrite).toHaveBeenCalled();
     expect(room.messages.length).toBe(1)
   })
 
@@ -61,8 +62,16 @@ describe('Room unit tests model', () => {
     message.to = user2;
     message.private = true;
     room.sendMessage(message);
-    expect(mWrite).toHaveBeenCalledTimes(1);
+    expect(mWrite).toHaveBeenCalled();
     expect(room.messages.length).toBe(1)
+  })
+
+  test('should returns a user by nickname', () => {
+    expect(room.getUser('testUser')).toMatchObject(user);
+  })
+
+  test('should not returns a user by unknown nickname', () => {
+    expect(room.getUser('fail')).toBeUndefined();
   })
 
   afterEach(() => {

@@ -6,7 +6,9 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-const client = net.createConnection({ port: 4000 });
+const port = process.env.PORT || 4000;
+
+const client = net.createConnection({ port });
 
 client.on('data', (data) => {
   console.log(`${data.toString()}`);
